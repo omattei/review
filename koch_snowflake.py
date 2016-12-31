@@ -5,34 +5,45 @@
 # Author:       Andrea Shaw <rshaw@olivermattei.net>
 # Date Created: 31 December 2016
 import sys
+import os
 import turtle
 import canvasvg
-import math
+from math import sin, cos, pi, radians
 
 " CONSTANTS "
 UNIT_LENGTH = 500
-
+BASE_THETA = 60 # degrees
 " GLOBAL VARIABLES " 
 screen = turtle.Screen()
-screen.delay(0.001) # milliseconds
+screen.delay(0.0000001) # milliseconds
+#screen.tracer(0, 0)
 
 turtles = [ turtle.Turtle() for _ in range(3) ]
 
 " SET ATTRIBUTES FOR TURTLES " 
-angle = 60 # degrees
+angle = BASE_THETA 
 
-def rectang(r, theta):
-    return 
+"""
+    Converts polar to rectangular coordinates with the given shift.
 
-rectang = lambda r, theta: (r * math.cos(math.radians(theta)) + 1) 
+    @param r the radius 
+    @param theta the angle
+    @return a 2-tuple of x- and y-coordinates
+"""
+def pol2rect(r, theta, shift):
+    return (
+            r * cos(radians(theta) + shift),
+            r * sin(radians(theta) + shift),
+        ) 
 
 for t in turtles:
     t.penup()
-
-    t.goto(rectang(UNIT_LENGTH, angle))
+    t.hideturtle()
+    t.goto( pol2rect(UNIT_LENGTH, angle, 15/18*pi) )
     t.seth(angle)
     
     t.pendown()
+    t.speed("fastest")
 
     angle += 120
 
@@ -55,4 +66,23 @@ else:
     @param length the length to draw any line segment
 """
 def draw_snowflake(turtles, level, length):
-    if 
+    if level < 1:
+        [ t.forward(length) for t in turtles ]
+    else:
+        draw_snowflake(turtles, level - 1, length / 3)
+        [ t.left(BASE_THETA) for t in turtles ]
+        draw_snowflake(turtles, level - 1, length / 3)
+        [ t.right(2 * BASE_THETA) for t in turtles ]
+        draw_snowflake(turtles, level - 1, length / 3)
+        [ t.left(BASE_THETA) for t in turtles ]
+        draw_snowflake(turtles, level - 1, length / 3)
+
+draw_snowflake(turtles, levels, UNIT_LENGTH * 3**0.5)
+
+filepath = os.path.join(os.getcwd(), "Koch_Snowflake_{}_Levels.svg".format(levels))
+canvasvg.saveall(filepath, screen.getcanvas())
+
+print("Saving image to", filepath, "...")
+
+#screen.update()
+screen.mainloop()
