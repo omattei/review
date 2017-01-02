@@ -4,11 +4,11 @@
 #
 # Author:       Andrea Shaw <rshaw@olivermattei.net>
 # Date Created: 31 December 2016
-import sys
-import os
+import sys, os
+from math import sin, cos, pi, radians
+
 import turtle
 import canvasvg
-from math import sin, cos, pi, radians
 
 " CONSTANTS "
 UNIT_LENGTH = 500
